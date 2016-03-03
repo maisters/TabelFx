@@ -14,12 +14,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 public class Person {
 	// An enum for age categories
@@ -27,8 +29,8 @@ public class Person {
 		BABY, CHILD, TEEN, ADULT, SENIOR, UNKNOWN
 	};
 
-	private final ReadOnlyIntegerWrapper personId =
-			 new ReadOnlyIntegerWrapper(this, "personId", personSequence.incrementAndGet());
+	private final IntegerProperty personId =
+			 new SimpleIntegerProperty(this, "personId");
 	private final StringProperty firstName =
 			 new SimpleStringProperty(this, "firstName", null);
 	private final StringProperty lastName =
@@ -40,10 +42,11 @@ public class Person {
 	private static AtomicInteger personSequence = new AtomicInteger(0);
 
 	public Person() {
-		this(null, null, null);
+		this(0,null, null, null);
 	}
 
-	public Person(String firstName, String lastName, LocalDate birthDate) {
+	public Person(int personId,String firstName, String lastName, LocalDate birthDate) {
+                this.personId.set(personId);
 		this.firstName.set(firstName);
 		this.lastName.set(lastName);
 		this.birthDate.set(birthDate);
@@ -54,8 +57,8 @@ public class Person {
 		return personId.get();
 	}
 
-	public final ReadOnlyIntegerProperty personIdProperty() {
-		return personId.getReadOnlyProperty();
+	public final IntegerProperty personIdProperty() {
+		return personId;
 	}
 
 	/* firstName Property */

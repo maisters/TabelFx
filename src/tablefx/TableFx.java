@@ -12,8 +12,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.Person;
 
@@ -24,7 +26,7 @@ import model.Person;
 public class TableFx extends Application {
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws Exception {
         //create a table view with a list of persons
         TableView <Person> table = new TableView<>(PersonTableUtil.getPersonList());
         
@@ -33,9 +35,11 @@ public class TableFx extends Application {
                                     PersonTableUtil.getFirstNameColumn(),
                                     PersonTableUtil.getLastNameColumn(),
                                     PersonTableUtil.getBirthDate());
-        VBox root = new VBox(table);
-                
-        Scene scene = new Scene(root, 300, 250);
+        
+        System.out.println(table.getVisibleLeafColumns());
+        
+        BorderPane root = new BorderPane(table);                
+        Scene scene = new Scene(root, 1024,768);        
         
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);

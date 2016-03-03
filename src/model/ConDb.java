@@ -6,85 +6,96 @@
 package model;
 
 import java.sql.*;
+import java.time.LocalDate;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
  * @author Администратор
  */
 public class ConDb {
-	private static Connection conn;
+    
+    private static Connection conn;
+
+    
 	
-	public ConDb() throws Exception{
-		//connect to database
-		String url = "jdbc:postgresql://192.168.0.14/Baza";
-		String user = "postgres";
-		String pass = "Winston15lm";
+    public ConDb() throws Exception{
+	//connect to database
+	String url = "jdbc:postgresql://192.168.0.14/Test";
+	String user = "postgres";
+	String pass = "Winston15lm";
 		
-		conn = DriverManager.getConnection(url,user,pass);
+	conn = DriverManager.getConnection(url,user,pass);
 		
 	}
 
-	public static List<part>getAllParts() throws Exception{
-		List<part>list = new ArrayList<>();
+    public static ObservableList<Person>getAllParts() throws Exception{
+        ObservableList<Person>list = FXCollections.observableArrayList();
 		
-		Statement myStmt = null;
-		ResultSet myRes = null;
+        Statement myStmt = null;
+        ResultSet myRes = null;
 		
-		try{
-			myStmt = conn.createStatement();
-			myRes = myStmt.executeQuery("select * from parti_2016 order by (data,numofpart) desc");
-			
-			
+        try{
+            myStmt = conn.createStatement();
+            myRes = myStmt.executeQuery("select * from persons");	
 		
-		while(myRes.next()){
-			part tempPart = convertRowToPart(myRes);
-			list.add(tempPart);
-		}
-		return list;
-		
-	}finally{
-		close(myStmt,myRes);
-	}
-	}
+            while(myRes.next()){
+		Person temp = convertRowToPart(myRes);
+		list.add(temp);
+            }
+            
+	return list;
+                
+        }finally{
+            close(myStmt,myRes);
+        }
+        
+    }
 	
 	
 	
 
-		private static person convertRowToPart(ResultSet myRs) throws SQLException {
-			
-			int id = myRs.getInt("NumOfPart");
-			Date data = myRs.getDate("Data");
-			String product = myRs.getString("Product");
-			String weight = myRs.getString("Weight");
-			String firm = myRs.getString("Firm");
-			String order = myRs.getString("NumOfOrder");
-			
-			part tempPart = new part(id,data, product, weight,firm,order);
-			
-			return tempPart;
-		}
+    private static Person convertRowToPart(ResultSet myRs) throws SQLException {			
+        int id = myRs.getInt("id");
+        String firstName = myRs.getString("firstName");
+        String lastName = myRs.getString("lastName");
+        LocalDate birthDate =toLocalDate(myRs.getDate("birthDate"));                        
+        return new Person(id,firstName,lastName,birthDate);                        
+    }
 
 		
-		private static void close(Connection myConn, Statement myStmt, ResultSet myRs)
+    private static void close(Connection myConn, Statement myStmt, ResultSet myRs)
 				throws SQLException {
+        if (myRs != null) {
+            myRs.close();
+        }
 
-			if (myRs != null) {
-				myRs.close();
-			}
-
-			if (myStmt != null) {
-				
-			}
+        if (myStmt != null) {
+            myStmt.close();
+        }
 			
-			if (myConn != null) {
-				myConn.close();
-			}
-		}
+        if (myConn != null) {
+            myConn.close();
+        }
+    }
+        
+        
+    private static void close(Statement myStmt, ResultSet myRs) throws SQLException {
+        close(null, myStmt, myRs);	
+    }
+        
+        
+    private static LocalDate toLocalDate(Date date) {
+        return date.toLocalDate();
+        }	
 
-		private static void close(Statement myStmt, ResultSet myRs) throws SQLException {
-			close(null, myStmt, myRs);		
-		}
-		
-
+        
+    public static void main(String [] args) throws Exception{
+        ConDb s = new ConDb();
+        ObservableList l = FXCollections.observableArrayList(s.getAllParts());       
+        System.out.println(l);
+            
+    }
 					
 }		

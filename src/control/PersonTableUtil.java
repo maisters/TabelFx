@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import model.ConDb;
 import model.Person;
 
 /**
@@ -17,16 +18,18 @@ import model.Person;
  * @author Администратор
  */
 public class PersonTableUtil {
+    private static ObservableList<Person> list = FXCollections.observableArrayList();
+    private static ConDb conn;
         //returns an observable list of persons
     public static ObservableList<Person> getPersonList(){
-        Person p1 = new Person("Brian", "Johnson",LocalDate.of(2012,10,11));
-        Person p2 = new Person("Mick", "Jagger",LocalDate.of(2011,9,10));
-        Person p3 = new Person("Angus", "Young",LocalDate.of(2010,8,9));
-        Person p4 = new Person("Lemmy", "Kilmister",LocalDate.of(2009,7,8));
-        Person p5 = new Person("Alice", "Cooper",LocalDate.of(2008,6,7));
-        Person p6 = new Person("Dusty", "Hill",LocalDate.of(2007,5,6));
-        Person p7 = new Person("Dee", "Snider",LocalDate.of(2006,4,5));
-        return FXCollections.<Person>observableArrayList(p1,p2,p3,p4,p5,p6,p7);
+        try{ 
+            conn = new ConDb();
+            list = conn.getAllParts();
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Data base error");
+        }
+        return list;
     }
     
     //returns Person id table column
@@ -56,4 +59,11 @@ public class PersonTableUtil {
         birthDateColumn.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
         return birthDateColumn;
     }
+    
+    public static void main(String [] args){
+        ObservableList l = FXCollections.observableArrayList(PersonTableUtil.getPersonList());
+        System.out.println(l);
+    }
+
+    
 }
